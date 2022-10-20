@@ -1,10 +1,13 @@
-import React, { useState } from "react";
-import { Button, PermissionsAndroid, StatusBar, StyleSheet, Text, View, Dimensions, Alert } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Button, SafeArea, PermissionsAndroid, StatusBar, StyleSheet, Text, View, Dimensions, Alert, TextInput, Form } from "react-native";
 import MapView from "react-native-maps";
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RNSettings from 'react-native-settings';
 import NetInfo from "@react-native-community/netinfo";
+import SendSMS from 'react-native-sms'
+
+
 const Stack = createNativeStackNavigator();
 const checkPermission = async () =>{
   pass = false
@@ -63,6 +66,9 @@ const App = () => {
       <Stack.Navigator>
         <Stack.Screen name='Home' component={HomeScreen} />
         <Stack.Screen name='Map' component={MapScreen} />
+        <Stack.Screen name='Sign-Up' component={SignUpScreen} />
+        <Stack.Screen name='Login' component={LoginScreen} />
+        <Stack.Screen name='validation' component={ValidationScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -72,6 +78,7 @@ const HomeScreen = ({ navigation }) =>{
   return (
     <View>
       <Text>Home</Text>
+
       <Button 
         title="Map Button"
         onPress={async()=> {
@@ -85,6 +92,21 @@ const HomeScreen = ({ navigation }) =>{
           }
         }}
       />
+
+      <Button 
+        title="Sign-Up "
+        onPress={() =>{
+          navigation.navigate('Sign-Up');
+        }}
+      />
+
+      <Button 
+        title="Login"
+        onPress={() => {
+          navigation.navigate('Login');
+        }}
+      />
+
     </View>
   );
 };
@@ -95,6 +117,68 @@ const MapScreen = ({ navigation }) =>{
     </View>
   );
 };
+
+const ValidationScreen = ({ navigation, route }) =>{
+  verify = route.params.paramKey
+  const {text, setText} = useState('');
+  const onPressHandler =(event) =>{
+    if (verify === text) {
+      console.log('Code is Correct!');
+    } else {
+      console.log("Code Is Wrong! Try again");
+    }
+  }
+  return(
+    <View>
+      <TextInput value={text} placeholder="Verification code" onChangeText={setText} />
+      <Button
+        title="Verify"
+        onPress={onPressHandler}
+       />
+    </View>
+  )
+}
+
+const SignUpScreen = ({ navigation }) =>{
+  code = "pickUp";
+  const [userName ,setUserName] = useState('');
+  const [pwd, setPwd] = useState('');
+  const [number, setNumber] = useState('');
+  const submitHandler = (event) =>{
+    console.log(number)
+    SendSMS.send({
+      body: `Hi ${userName}$ The Validation Code is ${code}$`,
+      recipients: [`${number}$`],
+      successTypes : ['send'],
+      allowAndroidSendWithoutReadPermission: true,
+    },(complete, cancel, err) =>{
+      console.log('Sms has been sent! ');
+    })
+    navigation.navigate('validation', {paramKey : code});
+  }
+
+  return (
+    <View>
+      <TextInput value = {userName} placeholder = 'UserName' onChangeText = {setUserName} style = {styles.input} />
+      <TextInput value = {pwd} placeholder = "Password" onChangeText = {setPwd} style = {styles.input} secureTextEntry={true} />
+      <TextInput value = {number} placeholder = 'Phone Number' onChangeText = {setNumber} keyboardType = "numeric" style = {styles.input} />
+      <Button
+        title="Submit" 
+        onPress={() =>{
+          submitHandler()
+        }}
+      />
+    </View>
+  )
+}
+
+const LoginScreen = ({ navigation }) =>{
+  return (
+    <View>
+      <Text> Login Screen </Text>
+    </View>
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -113,6 +197,13 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+    color : "#000"
   },
 });
 

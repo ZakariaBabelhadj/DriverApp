@@ -1,10 +1,18 @@
 package com.test;
-
+import android.content.Intent; // <-- include if not already there
+import com.tkporter.sendsms.SendSMSPackage;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
 
 public class MainActivity extends ReactActivity {
+
+  @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+      super.onActivityResult(requestCode, resultCode, data);
+      //probably some other stuff here
+      SendSMSPackage.getInstance().onActivityResult(requestCode, resultCode, data);
+    }
 
   /**
    * Returns the name of the main component registered from JavaScript. This is used to schedule

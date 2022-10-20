@@ -1,5 +1,4 @@
 package com.test;
-
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
@@ -29,6 +28,7 @@ public class MainApplication extends Application implements ReactApplication {
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
           return packages;
+          
         }
 
         @Override
