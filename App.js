@@ -5,7 +5,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RNSettings from 'react-native-settings';
 import NetInfo from "@react-native-community/netinfo";
-import SendSMS from 'react-native-sms'
+import SendSMS from 'react-native-sms';
+// geolocation service tamchi m3a google map api galoha fi doc
+import Geolocation from 'react-native-geolocation-service';
 
 
 const Stack = createNativeStackNavigator();
@@ -110,10 +112,44 @@ const HomeScreen = ({ navigation }) =>{
     </View>
   );
 };
-const MapScreen = ({ navigation }) =>{
+
+// Position hiya li ma7abtch tamchi 
+
+const getLocation = () =>{
+  var pos = null
+  if (checkPermission) {
+    Geolocation.getCurrentPosition (
+      (position) => {
+       pos = position
+       
+       console.log(pos)
+      },
+     (error) => {
+       console.log(error.code, error.message);
+     },
+     { enableHighAccuracy: true, maximumAge: 10000 }
+   );
+  } else {
+    console.log('error')
+  }
+  
+}
+const MapScreen =  ({ navigation }) => {
+  var pos = getLocation()
+  useEffect(() =>{
+    const timer = setTimeout(() =>{
+      console.log('Time is Up!')
+    }, 3000);
+    return () => clearTimeout(timer);
+   }, [])
   return (
     <View>
-      <MapView style={styles.map}/>
+      <MapView style={styles.map}
+        // initialRegion = {{
+        //   latitude : pos.coords.latitude,
+        //   longitude : pos.coords.longitude,
+        // }}
+      />
     </View>
   );
 };
@@ -148,7 +184,7 @@ const SignUpScreen = ({ navigation }) =>{
     console.log(number)
     SendSMS.send({
       body: `Hi ${userName}$ The Validation Code is ${code}$`,
-      recipients: [`${number}$`],
+      recipients: [number],
       successTypes : ['send'],
       allowAndroidSendWithoutReadPermission: true,
     },(complete, cancel, err) =>{
