@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, SafeArea, PermissionsAndroid, StatusBar, StyleSheet, Text, View, Dimensions, Alert, TextInput, Form } from "react-native";
-import MapView from "react-native-maps";
+import MapView, {Marker} from "react-native-maps";
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RNSettings from 'react-native-settings';
@@ -113,44 +113,46 @@ const HomeScreen = ({ navigation }) =>{
   );
 };
 
-// Position hiya li ma7abtch tamchi 
 
-const getLocation = () =>{
-  var pos = null
-  if (checkPermission) {
-    Geolocation.getCurrentPosition (
-      (position) => {
-       pos = position
-       
-       console.log(pos)
-      },
-     (error) => {
-       console.log(error.code, error.message);
-     },
-     { enableHighAccuracy: true, maximumAge: 10000 }
-   );
-  } else {
-    console.log('error')
-  }
-  
-}
 const MapScreen =  ({ navigation }) => {
-  var pos = getLocation()
+  const [position, setPosition] = useState({
+    latitude: 0,
+    longitude: 0,
+    latitudeDelta: 1,
+    longitudeDelta: 1,
+  });
+  const [fol, setFol] = useState(true);
+  const [sho, setSho] = useState(true);
   useEffect(() =>{
-    const timer = setTimeout(() =>{
-      console.log('Time is Up!')
-    }, 3000);
-    return () => clearTimeout(timer);
-   }, [])
+    Geolocation.getCurrentPosition((pos) =>{
+      const crd = pos.coords;
+      setPosition({
+        latitude : crd.latitude,
+        longitude: crd.longitude,
+        latitudeDelta: 0.09,
+        longitudeDelta: 0.09
+      });
+      console.log(pos);
+    },(err) =>{
+      console.log(err);
+    });
+  }, []);
   return (
-    <View>
       <MapView style={styles.map}
-        // initialRegion = {{
-        //   latitude : pos.coords.latitude,
-        //   longitude : pos.coords.longitude,
-        // }}
-      />
-    </View>
+      onUserLocationChange={(eve) =>{console.log(eve.nativeEvent)}}
+        initialRegion = {position}
+        showsUserLocation={sho}
+        showsMyLocationButton={true}
+        followsUserLocation={fol}
+        showsCompass={true}
+        scrollEnabled={true}
+        zoomEnabled={true}
+        pitchEnabled={true}>
+          <Marker 
+          coordinate={position}
+          title={'Current Location'}
+          description={'This is Your current Location!'}/>
+        </MapView>
   );
 };
 
