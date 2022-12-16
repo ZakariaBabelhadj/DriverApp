@@ -6,11 +6,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RNSettings from 'react-native-settings';
 import NetInfo from "@react-native-community/netinfo";
 import SendSMS from 'react-native-sms';
-// geolocation service tamchi m3a google map api galoha fi doc
 import Geolocation from 'react-native-geolocation-service';
 
+// Creating Stack
 
 const Stack = createNativeStackNavigator();
+
+// Checking all Permissions
+
 const checkPermission = async () =>{
   pass = false
   pass_location = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
@@ -35,6 +38,8 @@ const checkPermission = async () =>{
   }
   return pass;
 }
+
+// Checking Location
 
 const RequestLocation = async () => {
   try{
@@ -76,6 +81,8 @@ const App = () => {
   );
 };
 
+// Home Page
+
 const HomeScreen = ({ navigation }) =>{
   return (
     <View>
@@ -113,6 +120,7 @@ const HomeScreen = ({ navigation }) =>{
   );
 };
 
+// Map View
 
 const MapScreen =  ({ navigation }) => {
   const [position, setPosition] = useState({
@@ -132,29 +140,59 @@ const MapScreen =  ({ navigation }) => {
         latitudeDelta: 0.09,
         longitudeDelta: 0.09
       });
-      console.log(pos);
+      console.log(position)
     },(err) =>{
       console.log(err);
     });
+    
   }, []);
+  
   return (
-      <MapView style={styles.map}
-      onUserLocationChange={(eve) =>{console.log(eve.nativeEvent)}}
-        initialRegion = {position}
-        showsUserLocation={sho}
-        showsMyLocationButton={true}
-        followsUserLocation={fol}
-        showsCompass={true}
-        scrollEnabled={true}
-        zoomEnabled={true}
-        pitchEnabled={true}>
-          <Marker 
-          coordinate={position}
-          title={'Current Location'}
-          description={'This is Your current Location!'}/>
-        </MapView>
+      <View>
+        <MapView style={styles.map}
+          initialRegion = {position}
+          showsUserLocation={sho}
+          showsMyLocationButton={true}
+          followsUserLocation={fol}
+          showsCompass={true}
+          scrollEnabled={true}
+          zoomEnabled={true}
+          pitchEnabled={true}>
+            <Marker 
+            coordinate={position}
+            title={'Current Location'}
+            description={'This is Your current Location!'}/>
+            // Hado homa random Drivers
+            <Marker 
+            coordinate={position}
+            title={'Current Location'}
+            pinColor='yellow'
+            description={'This is Your current Location!'}/> 
+            <Marker 
+            coordinate={position}
+            title={'Current Location'}
+            pinColor='yellow'
+            description={'This is Your current Location!'}/> 
+            <Marker 
+            coordinate={position}
+            title={'Current Location'}
+            pinColor='yellow'
+            description={'This is Your current Location!'}/> 
+            <Marker 
+            coordinate={position}
+            title={'Current Location'}
+            pinColor='yellow'
+            description={'This is Your current Location!'}/>     
+          </MapView>
+          <Button style={styles.btn}
+          title="Search"
+          onPress={() => {}}
+          /> 
+      </View>
   );
 };
+
+// hado khorti nta3 sign up w validation sms
 
 const ValidationScreen = ({ navigation, route }) =>{
   verify = route.params.paramKey
@@ -234,7 +272,7 @@ const styles = StyleSheet.create({
   },
   map: {
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+    height: "80%",
   },
   input: {
     height: 40,
@@ -243,6 +281,12 @@ const styles = StyleSheet.create({
     padding: 10,
     color : "#000"
   },
+  btn: {
+    right: 100,
+    top: 200,
+    backgroundColor: "black",
+    elevation: 10,
+  }
 });
 
 export default App;
