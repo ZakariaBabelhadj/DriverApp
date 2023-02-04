@@ -7,6 +7,7 @@ import RNSettings from 'react-native-settings';
 import NetInfo from "@react-native-community/netinfo";
 import SendSMS from 'react-native-sms';
 import Geolocation from 'react-native-geolocation-service';
+import MapViewDirections from 'react-native-maps-directions';
 
 // Creating Stack
 
@@ -129,14 +130,72 @@ const MapScreen =  ({ navigation }) => {
     latitudeDelta: 1,
     longitudeDelta: 1,
   });
-  const [fol, setFol] = useState(true);
-  const [sho, setSho] = useState(true);
+  const [position1, setPosition1] = useState({
+    latitude: 0.05,
+    longitude: 0.05,
+    latitudeDelta: 1,
+    longitudeDelta: 1,
+  });
+  const [position2, setPosition2] = useState({
+    latitude: 0.05,
+    longitude: 0.05,
+    latitudeDelta: 1,
+    longitudeDelta: 1,
+  });
+  const [position3, setPosition3] = useState({
+    latitude: 0.05,
+    longitude: 0.05,
+    latitudeDelta: 1,
+    longitudeDelta: 1,
+  });
+  const [position4, setPosition4] = useState({
+    latitude: 0.05,
+    longitude: 0.05,
+    latitudeDelta: 1,
+    longitudeDelta: 1,
+  });
+  const [des, setDes] = useState({
+    latitude: 0.05,
+    longitude: 0.05,
+    latitudeDelta: 1,
+    longitudeDelta: 1,
+  });
   useEffect(() =>{
     Geolocation.getCurrentPosition((pos) =>{
       const crd = pos.coords;
       setPosition({
         latitude : crd.latitude,
         longitude: crd.longitude,
+        latitudeDelta: 0.09,
+        longitudeDelta: 0.09
+      });
+      setDes({
+        latitude : crd.latitude + 0.002,
+        longitude: crd.longitude + 0.002,
+        latitudeDelta: 0.09,
+        longitudeDelta: 0.09
+      });
+      setPosition1({
+        latitude : crd.latitude + 0.0009,
+        longitude: crd.longitude + 0.0009,
+        latitudeDelta: 0.09,
+        longitudeDelta: 0.09
+      });
+      setPosition2({
+        latitude : crd.latitude - 0.0009,
+        longitude: crd.longitude - 0.0009,
+        latitudeDelta: 0.09,
+        longitudeDelta: 0.09
+      });
+      setPosition3({
+        latitude : crd.latitude - 0.0009,
+        longitude: crd.longitude + 0.0009,
+        latitudeDelta: 0.09,
+        longitudeDelta: 0.09
+      });
+      setPosition4({
+        latitude : crd.latitude + 0.0009,
+        longitude: crd.longitude - 0.0009,
         latitudeDelta: 0.09,
         longitudeDelta: 0.09
       });
@@ -151,9 +210,9 @@ const MapScreen =  ({ navigation }) => {
       <View>
         <MapView style={styles.map}
           initialRegion = {position}
-          showsUserLocation={sho}
+          showsUserLocation={true}
           showsMyLocationButton={true}
-          followsUserLocation={fol}
+          followsUserLocation={true}
           showsCompass={true}
           scrollEnabled={true}
           zoomEnabled={true}
@@ -162,32 +221,50 @@ const MapScreen =  ({ navigation }) => {
             coordinate={position}
             title={'Current Location'}
             description={'This is Your current Location!'}/>
-            // Hado homa random Drivers
+            {/* // Hado homa random Drivers */}
             <Marker 
-            coordinate={position}
+            coordinate={position1}
             title={'Current Location'}
             pinColor='yellow'
             description={'This is Your current Location!'}/> 
             <Marker 
-            coordinate={position}
+            coordinate={position2}
             title={'Current Location'}
             pinColor='yellow'
             description={'This is Your current Location!'}/> 
             <Marker 
-            coordinate={position}
+            coordinate={position3}
             title={'Current Location'}
             pinColor='yellow'
             description={'This is Your current Location!'}/> 
             <Marker 
-            coordinate={position}
+            coordinate={position4}
             title={'Current Location'}
             pinColor='yellow'
-            description={'This is Your current Location!'}/>     
+            description={'This is Your current Location!'}/>  
+            <Marker 
+            coordinate={des}
+            title={'destination Location'}
+            pinColor='blue'
+            description={'This is Your destination Location!'}/>
+            <MapViewDirections 
+            origin={position}
+            destination={des}
+            apikey={'AIzaSyC5Uv9S6jygQfUr9OtLwbm9InWr_G17fBM'}
+            strokeWidth={3}
+            strokeColor="hotpink"
+          />  
           </MapView>
+          
           <Button style={styles.btn}
           title="Search"
           onPress={() => {}}
           /> 
+          <TextInput 
+          style={styles.input}
+            onChangeText={()=>{}}
+            placeholder='Destination'
+          />
       </View>
   );
 };
